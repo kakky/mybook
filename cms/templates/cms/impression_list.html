@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}感想の一覧{% endblock title %}
+
+{% block extrahead %}
+<script>
+$(function() {
+  $('.del_confirm').on('click', function () {
+     $("#del_pk").text($(this).attr("pk"));
+     $('#del_url').attr('href', $(this).attr("url"));
+  });
+});
+</script>
+<style>
+table {
+  margin-top: 8px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">感想の一覧 <small>{{ book.name }}</small></h3>
+    <a href="{% url 'cms:impression_add' book_id=book.id %}" class="btn btn-default btn-sm">追加</a>
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>コメント</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for impression in impressions %}
+        <tr>
+          <td>{{ impression.id }}</td>
+          <td>{{ impression.comment|linebreaksbr }}</td>
+          <td>
+          	<a href="{% url 'cms:impression_mod' book_id=book.id impression_id=impression.id %}" class="btn btn-default btn-sm">修正</a>
+          	<button class="btn btn-default btn-sm del_confirm" data-toggle="modal" data-target="#deleteModal" pk="{{ impression.id }}" url="{% url 'cms:impression_del' book_id=book.id impression_id=impression.id %}">削除</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if is_paginated %}
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+        <li class="disabled"><a href="#">&laquo;</a></li>
+      {% endif %}
+      {% for linkpage in page_obj.paginator.page_range %}
+        {% ifequal linkpage page_obj.number %}
+          <li  class="active"><a href="#">{{ linkpage }}</a></li>
+        {% else %}
+          <li><a href="?page={{ linkpage }}">{{ linkpage }}</a></li>
+        {% endifequal %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+      {% else %}
+        <li class="disabled"><a href="#">&raquo;</a></li>
+      {% endif %}
+    </ul>
+    {% endif %}
+
+	<div>
+      <a href="{% url 'cms:book_list' %}" class="btn btn-default btn-sm">戻る</a>
+    </div>
+
+{# 削除を確認するモーダル ダイアログ #}
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="deleteModalLabel">確認</h4>
+      </div>
+      <div class="modal-body">
+        <p>ID: <span id="del_pk"></span> を削除しますか？</p>
+      </div>
+      <div class="modal-footer">
+      	<a href="#" class="btn btn-primary" id="del_url">OK</a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

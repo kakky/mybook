@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}書籍の一覧{% endblock title %}
+
+{% block extrahead %}
+<style>
+table {
+  margin-top: 8px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">書籍の一覧</h3>
+    <a href="{% url 'cms:book_add' %}" class="btn btn-default btn-sm">追加</a>
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>書籍名</th>
+          <th>出版社</th>
+          <th>ページ数</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>{{ book.id }}</td>
+          <td>{{ book.name }}</td>
+          <td>{{ book.publisher }}</td>
+          <td>{{ book.page }}</td>
+          <td>
+          	<a href="{% url 'cms:book_mod' book_id=book.id %}" class="btn btn-default btn-sm">修正</a>
+          	<a href="{% url 'cms:book_del' book_id=book.id %}" class="btn btn-default btn-sm">削除</a>
+          	<a href="{% url 'cms:impression_list' book_id=book.id %}" class="btn btn-default btn-sm btn-primary">感想の一覧</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock content %}
