@@ -13,9 +13,9 @@ def render_json_response(request, data, status=None):
         callback = request.REQUEST.get('callback')  # POSTでJSONPの場合
     if callback:
         json_str = "%s(%s)" % (callback, json_str)
-        response = HttpResponse(json_str, mimetype='application/javascript; charset=UTF-8', status=status)
+        response = HttpResponse(json_str, content_type='application/javascript; charset=UTF-8', status=status)
     else:
-        response = HttpResponse(json_str, mimetype='application/json; charset=UTF-8', status=status)
+        response = HttpResponse(json_str, content_type='application/json; charset=UTF-8', status=status)
     return response
 
 def book_list(request):
